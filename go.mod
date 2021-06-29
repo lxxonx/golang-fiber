@@ -3,6 +3,7 @@ module github.com/lxxonx/golang-fiber
 go 1.16
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/gofiber/fiber/v2 v2.13.0 //indirect
 	github.com/lib/pq v1.6.0 // indirect
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e // indirect
