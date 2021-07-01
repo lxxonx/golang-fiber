@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -28,6 +29,59 @@ func Register(c *fiber.Ctx) error {
 	database.DB.Create(&user)
 	
     return c.JSON(user)
+}
+
+func Login(c *fiber.Ctx) error {
+	var data map[string]string // string for key, string for value
+	
+	if err := c.BodyParser(&data); err != nil{
+		return err
+	}
+
+	var user models.User
+
+	database.DB.Where("email = ?", data["email"]).First(&user)
+
+	if user.ID == 0 {
+		// user doesn't exist
+		c.Status(fiber.StatusNotFound)
+		return c.JSON(fiber.Map{
+			// fiber.map is like dictionary or object type of js
+			"message": "user not found",
+		})
+	}
+	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(data["password"])); err != nil{
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON((fiber.Map{
+			"message": "incorrect password",
+		}))
+	}
+
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer: strconv.Itoa(int(user.ID)),
+		ExpiresAt: time.Now().Add(time.Hour *24).Unix(), // 1day
+	})
+
+	token, err := claims.SignedString([]byte(SecretKey))
+
+	if err != nil {
+		c.Status(fiber.StatusInternalServerError)
+		return c.JSON((fiber.Map{
+			"message": "could not login",
+		}))
+	}
+
+	cookie := fiber.Cookie{
+		Name: "jwt",
+		Value: token,
+		Expires: time.Now().Add(time.Hour *24), //1 day
+		HTTPOnly: true,
+	}
+	c.Cookie(&cookie)
+
+	return c.JSON(fiber.Map{
+		"message": "success",
+	})
 }
 
 func User(c *fiber.Ctx) error {
