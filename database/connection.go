@@ -1,6 +1,10 @@
 package database
 
 import (
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
 	"github.com/lxxonx/golang-fiber/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -9,7 +13,12 @@ import (
 var DB *gorm.DB
 
 func Connect() {
-	dsn := "postgres://postgres:1234@localhost:5432/gotutorial"
+	err := godotenv.Load()
+	if err != nil {
+	  log.Fatal("Error loading .env file")
+	}
+	dsn := os.Getenv("DSN")
+
     connection, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
     if err != nil {
     	panic("failed to connect database")
