@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/lxxonx/golang-fiber/database"
@@ -8,6 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const SecretKey = "secret"
 
 func Register(c *fiber.Ctx) error {
 	var data map[string]string // string for key, string for value
