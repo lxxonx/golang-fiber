@@ -25,9 +25,15 @@ func Register(c *fiber.Ctx) error {
 		Email: data["email"],
 		Password: password,
 	}
-
+	
+	// if user already exists 
+	// it returns id = 0
 	database.DB.Create(&user)
 	
+	if user.ID == 0{return c.JSON(fiber.Map{
+		"message": "user already exists",
+	})}
+
     return c.JSON(user)
 }
 
@@ -84,7 +90,7 @@ func Login(c *fiber.Ctx) error {
 	})
 }
 
-func User(c *fiber.Ctx) error {
+func UserPost(c *fiber.Ctx) error {
 	cookie := c.Cookies("jwt")
 
 	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error){
@@ -106,6 +112,7 @@ func User(c *fiber.Ctx) error {
 
 	return c.JSON(user)
 }
+
 func Logout(c *fiber.Ctx) error {
 	// remove cookie => set expire time past
 	cookie := fiber.Cookie{
@@ -118,4 +125,34 @@ func Logout(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"message": "logout success",
 	})
+}
+func Delete(c *fiber.Ctx) error {
+	cookie := c.Cookies("jwt")
+
+	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error){
+		return []byte(SecretKey), nil
+	})
+
+	if err != nil {
+		c.Status(fiber.StatusUnauthorized)
+		return c.JSON((fiber.Map{
+			"message": "unauthenticated",
+		}))
+	}
+
+	claims := token.Claims.(*jwt.StandardClaims)
+
+	var user models.User
+
+	database.DB.Where("ID = ?", claims.Issuer).First(&user)
+
+	return nil
+}
+func UserGet(c *fiber.Ctx) error {
+	
+	var user models.User
+
+	database.DB.Where("ID = ?", c.Params("id")).First(&user)
+
+	return c.JSON(user)
 }

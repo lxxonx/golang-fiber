@@ -1,8 +1,8 @@
 package database
 
 import (
+	"fmt"
 	"log"
-	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/lxxonx/golang-fiber/models"
@@ -17,7 +17,8 @@ func Connect() {
 	if err != nil {
 	  log.Fatal("Error loading .env file")
 	}
-	dsn := os.Getenv("DSN")
+	dsn := "postgres://lxxonx@localhost:5432/test"
+	fmt.Print(dsn)
 
     connection, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
     if err != nil {
@@ -25,5 +26,8 @@ func Connect() {
     }
 	DB = connection
 	
+	// migrate
 	connection.AutoMigrate(&models.User{})
+	connection.AutoMigrate(&models.Post{})
+
 }

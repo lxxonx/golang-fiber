@@ -9,6 +9,6 @@ import (
 func Setup(app *fiber.App) {
 	app.Post("/api/register", controllers.Register)
 	app.Post("/api/login", controllers.Login)
-	app.Get("/api/user/:id", controllers.User)
+	app.Get("/api/user/:id", controllers.UserGet)
 	app.Post("/api/logout", controllers.Logout)
 }
