@@ -156,3 +156,10 @@ func UserGet(c *fiber.Ctx) error {
 
 	return c.JSON(user)
 }
+func GetUsers(c *fiber.Ctx) error {
+	var users []models.User
+
+	database.DB.Find(&users)
+
+	return c.JSON(users)
+}
