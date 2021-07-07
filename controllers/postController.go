@@ -31,3 +31,9 @@ func CreatePost(c *fiber.Ctx) error {
 
     return c.JSON(post)
 }
+func GetPosts(c *fiber.Ctx) error {
+	var posts []models.Post
+	database.DB.Find(&posts)
+
+	return c.JSON(posts)
+}
