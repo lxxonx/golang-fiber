@@ -3,6 +3,7 @@ package controllers
 import (
 	"strconv"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/lxxonx/golang-fiber/database"
 	"github.com/lxxonx/golang-fiber/models"
@@ -36,4 +37,29 @@ func GetPosts(c *fiber.Ctx) error {
 	database.DB.Find(&posts)
 
 	return c.JSON(posts)
+}
+func DeletePost(c *fiber.Ctx) error {
+	cookie := c.Cookies("jwt")
+
+	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error){
+		return []byte(SecretKey), nil
+	})
+
+	if err != nil {
+		c.Status(fiber.StatusUnauthorized)
+		return c.JSON((fiber.Map{
+			"message": "unauthenticated",
+		}))
+	}
+
+	claims := token.Claims.(*jwt.StandardClaims)
+
+	var post models.Post
+	database.DB.Where("ID = ? ", c.Params("id")).First(&post)
+
+	issuer, _ := strconv.ParseUint(claims.Issuer,10,64)
+	if post.UserId == issuer{
+	database.DB.Where("ID = ?", c.Params("id")).Delete(&post)
+	}
+	return nil
 }
