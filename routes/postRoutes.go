@@ -8,5 +8,5 @@ import (
 func postRoute(app *fiber.App) {
 	app.Get("/api/posts", controllers.GetPosts)
 	app.Post("/api/post/create", controllers.CreatePost)
-
+	app.Delete("/api/post/:id", controllers.DeletePost)
 }

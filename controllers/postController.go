@@ -15,15 +15,30 @@ func CreatePost(c *fiber.Ctx) error {
 	if err := c.BodyParser(&data); err != nil{
 		return err
 	}
-	number, _ := strconv.ParseUint(data["userId"],10,64)
+
+	cookie := c.Cookies("jwt")
+
+	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error){
+		return []byte(SecretKey), nil
+	})
+
+	if err != nil {
+		c.Status(fiber.StatusUnauthorized)
+		return c.JSON((fiber.Map{
+			"message": "unauthenticated",
+		}))
+	}
+
+	claims := token.Claims.(*jwt.StandardClaims)
+
+	issuer, _ := strconv.ParseUint(claims.Issuer,10,64)
+	
 	post := models.Post{
 		Title: data["title"],
 		Text: data["text"],
-		UserId: number,
+		UserId: issuer,
 	}
 	
-	// if user already exists 
-	// it returns id = 0
 	database.DB.Create(&post)
 	
 	if post.ID == 0{return c.JSON(fiber.Map{
