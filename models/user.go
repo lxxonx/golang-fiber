@@ -5,5 +5,5 @@ type User struct {
 	Name 		string	`json:"name"`
 	Email 		string 	`json:"email" gorm:"unique"`
 	Password 	[]byte	`json:"-"` // don't return the value
-	Posts 		[]Post
+	Posts 		[]Post	`json:"posts"`
 }

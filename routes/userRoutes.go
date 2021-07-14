@@ -4,10 +4,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/lxxonx/golang-fiber/controllers"
 )
-func userRoute(app *fiber.App) {
-	app.Post("/api/register", controllers.Register)
-	app.Post("/api/login", controllers.Login)
-	app.Get("/api/user/:id", controllers.UserGet)
-	app.Post("/api/logout", controllers.Logout)
-	app.Get("/api/users", controllers.GetUsers)
+func userRoute(api fiber.Router) {
+	users := api.Group("/users")        // /api/v1
+
+	users.Post("", controllers.Register)
+	users.Post("/login", controllers.Login)
+	users.Get("/:id", controllers.UserGet)
+	users.Post("/logout", controllers.Logout)
+	users.Get("/", controllers.GetUsers)
 }

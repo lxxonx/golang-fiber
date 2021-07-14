@@ -5,8 +5,11 @@ import (
 	"github.com/lxxonx/golang-fiber/controllers"
 )
 
-func postRoute(app *fiber.App) {
-	app.Get("/api/posts", controllers.GetPosts)
-	app.Post("/api/post/create", controllers.CreatePost)
-	app.Delete("/api/post/:id", controllers.DeletePost)
+func postRoute(api fiber.Router) {
+	posts:=api.Group("/posts")
+
+
+	posts.Get("/", controllers.GetPosts)
+	posts.Post("/", controllers.CreatePost)
+	posts.Delete("/:id", controllers.DeletePost)
 }

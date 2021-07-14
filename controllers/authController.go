@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -151,15 +152,19 @@ func Delete(c *fiber.Ctx) error {
 func UserGet(c *fiber.Ctx) error {
 	
 	var user models.User
+	var posts []models.Post
+	database.DB.Where("id = ?", c.Params("id")).First(&user)
+	database.DB.Where("user_id = ?", c.Params("id")).Find(&posts)
 
-	database.DB.Where("ID = ?", c.Params("id")).First(&user)
+	user.Posts = posts
 
+	fmt.Println(posts)
 	return c.JSON(user)
 }
 func GetUsers(c *fiber.Ctx) error {
 	var users []models.User
-
-	database.DB.Find(&users)
+	// var posts []models.Post
+	database.DB.Table("users").Find(&users)
 
 	return c.JSON(users)
 }
