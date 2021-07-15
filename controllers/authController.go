@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
@@ -158,13 +157,11 @@ func UserGet(c *fiber.Ctx) error {
 
 	user.Posts = posts
 
-	fmt.Println(posts)
 	return c.JSON(user)
 }
 func GetUsers(c *fiber.Ctx) error {
 	var users []models.User
-	// var posts []models.Post
-	database.DB.Table("users").Find(&users)
 
+	database.DB.Set("gorm:auto_preload", true).Find(&users)
 	return c.JSON(users)
 }
