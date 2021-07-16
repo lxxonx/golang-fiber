@@ -13,7 +13,7 @@ import (
 
 const SecretKey = "secret"
 
-func Register(c *fiber.Ctx) error {
+func CreateUser(c *fiber.Ctx) error {
 	var data map[string]string // string for key, string for value
 	
 	if err := c.BodyParser(&data); err != nil{
@@ -90,29 +90,6 @@ func Login(c *fiber.Ctx) error {
 	})
 }
 
-func UserPost(c *fiber.Ctx) error {
-	cookie := c.Cookies("jwt")
-
-	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error){
-		return []byte(SecretKey), nil
-	})
-
-	if err != nil {
-		c.Status(fiber.StatusUnauthorized)
-		return c.JSON((fiber.Map{
-			"message": "unauthenticated",
-		}))
-	}
-
-	claims := token.Claims.(*jwt.StandardClaims)
-
-	var user models.User
-
-	database.DB.Where("ID = ?", claims.Issuer).First(&user)
-
-	return c.JSON(user)
-}
-
 func Logout(c *fiber.Ctx) error {
 	// remove cookie => set expire time past
 	cookie := fiber.Cookie{
@@ -126,7 +103,7 @@ func Logout(c *fiber.Ctx) error {
 		"message": "logout success",
 	})
 }
-func Delete(c *fiber.Ctx) error {
+func DeleteUser(c *fiber.Ctx) error {
 	cookie := c.Cookies("jwt")
 
 	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error){
@@ -148,7 +125,7 @@ func Delete(c *fiber.Ctx) error {
 
 	return nil
 }
-func UserGet(c *fiber.Ctx) error {
+func GetUser(c *fiber.Ctx) error {
 	
 	var user models.User
 	var posts []models.Post
@@ -162,6 +139,6 @@ func UserGet(c *fiber.Ctx) error {
 func GetUsers(c *fiber.Ctx) error {
 	var users []models.User
 
-	database.DB.Set("gorm:auto_preload", true).Find(&users)
+	database.DB.Find(&users)
 	return c.JSON(users)
 }

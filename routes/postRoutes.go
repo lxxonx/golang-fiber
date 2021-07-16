@@ -8,7 +8,6 @@ import (
 func postRoute(api fiber.Router) {
 	posts:=api.Group("/posts")
 
-
 	posts.Get("/", controllers.GetPosts)
 	posts.Post("/", controllers.CreatePost)
 	posts.Delete("/:id", controllers.DeletePost)
