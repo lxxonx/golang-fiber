@@ -90,6 +90,7 @@ func Login(c *fiber.Ctx) error {
 	})
 }
 
+
 func Logout(c *fiber.Ctx) error {
 	// remove cookie => set expire time past
 	cookie := fiber.Cookie{
