@@ -139,7 +139,7 @@ func GetUser(c *fiber.Ctx) error {
 }
 func GetUsers(c *fiber.Ctx) error {
 	var users []models.User
+	database.DB.Preload("Posts").Find(&users)
 
-	database.DB.Find(&users)
 	return c.JSON(users)
 }
