@@ -6,7 +6,7 @@ import (
 )
 
 func postRoute(api fiber.Router) {
-	posts:=api.Group("/posts")
+	posts:=api.Group("/posts") // /api/posts
 
 	posts.Get("/", controllers.GetPosts)
 	posts.Post("/", controllers.CreatePost)

@@ -5,7 +5,7 @@ import (
 	"github.com/lxxonx/golang-fiber/controllers"
 )
 func userRoute(api fiber.Router) {
-	users := api.Group("/users")        // /api/v1
+	users := api.Group("/users")        // /api/users
 
 	users.Get("/", controllers.GetUsers)
 	users.Get("/:id", controllers.GetUser)
