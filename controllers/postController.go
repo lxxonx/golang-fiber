@@ -9,6 +9,11 @@ import (
 	"github.com/lxxonx/golang-fiber/database"
 	"github.com/lxxonx/golang-fiber/models"
 )
+type Input struct {
+	Title		string	`json:"title"`
+	Text		string	`json:"text"`
+	Music 		[]uint8	`json:"music"`
+}
 
 func CreatePost(c *fiber.Ctx) error {
 	var data map[string]string // string for key, string for value
