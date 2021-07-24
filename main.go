@@ -13,7 +13,11 @@ func main() {
   database.Connect()
 
   // fiber create
-  app := fiber.New()
+  app := fiber.New(fiber.Config{
+    BodyLimit: 100 * 1024 * 1024, // 100MB 
+    //default limit of 4MB
+  })  
+
   app.Use(logger.New())
 
   app.Use(cors.New(cors.Config{

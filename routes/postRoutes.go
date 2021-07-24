@@ -10,5 +10,6 @@ func postRoute(api fiber.Router) {
 
 	posts.Get("/", controllers.GetPosts)
 	posts.Post("/", controllers.CreatePost)
+	posts.Post("/music", controllers.UploadMusic)
 	posts.Delete("/:id", controllers.DeletePost)
 }

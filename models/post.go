@@ -8,4 +8,5 @@ type Post struct {
 	Title		string	`json:"title"`
 	Text		string	`json:"text"`
 	UserId		uint64	`json:"userId"`
+	Music 		string	`json:"music"`
 }

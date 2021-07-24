@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/dgrijalva/jwt-go"
@@ -12,30 +13,33 @@ import (
 func CreatePost(c *fiber.Ctx) error {
 	var data map[string]string // string for key, string for value
 	
+	// parse data
 	if err := c.BodyParser(&data); err != nil{
+		// if err returns err
 		return err
 	}
 
+	// get token from Cookie
 	cookie := c.Cookies("jwt")
-
 	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error){
 		return []byte(SecretKey), nil
 	})
 
+	// verify token
 	if err != nil {
 		c.Status(fiber.StatusUnauthorized)
 		return c.JSON((fiber.Map{
 			"message": "unauthenticated",
 		}))
 	}
-
+	// get user who logged in
 	claims := token.Claims.(*jwt.StandardClaims)
-
-	issuer, _ := strconv.ParseUint(claims.Issuer,10,64)
+	issuer, _ := strconv.ParseUint(claims.Issuer, 10, 64)
 	
 	post := models.Post{
 		Title: data["title"],
 		Text: data["text"],
+		Music: data["music"],
 		UserId: issuer,
 	}
 	
@@ -77,4 +81,10 @@ func DeletePost(c *fiber.Ctx) error {
 	database.DB.Where("ID = ?", c.Params("id")).Delete(&post)
 	}
 	return nil
+}
+func UploadMusic(c *fiber.Ctx) error {
+	// Get first file from form field "document":
+	file, _ := c.FormFile("music")
+	// Save file to root directory:
+	return c.SaveFile(file, fmt.Sprintf("./musics/%s", file.Filename))
 }
